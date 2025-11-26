@@ -8,11 +8,13 @@ import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/supabase/auth-helpers';
 import { getUserBadges, getBadgeProgress } from '@/lib/gamification/badges';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     // Check authentication
     const user = await getCurrentUser();
-    
+
     if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -27,14 +29,14 @@ export async function GET(request: Request) {
     if (includeProgress) {
       // Return badges with progress
       const progress = await getBadgeProgress(user.id);
-      
+
       return NextResponse.json({
         badges: progress,
       });
     } else {
       // Return only earned badges
       const badges = await getUserBadges(user.id);
-      
+
       return NextResponse.json({
         badges,
       });

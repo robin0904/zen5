@@ -13,6 +13,8 @@ import {
   getDailyTasks
 } from '@/lib/tasks/task-selection';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     // Check authentication

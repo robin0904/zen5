@@ -8,11 +8,13 @@ import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/supabase/auth-helpers';
 import { completeTask } from '@/lib/tasks/completion-logic';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   try {
     // Check authentication
     const user = await getCurrentUser();
-    
+
     if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
