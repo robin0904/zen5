@@ -34,8 +34,8 @@ export async function AuthGuard({
   // Check if admin access is required
   if (requireAdmin && user) {
     const { createClient } = await import('@/lib/supabase/server');
-    const supabase = createClient();
-    
+    const supabase = await createClient();
+
     const { data: profile } = await supabase
       .from('users')
       .select('is_admin')
@@ -55,11 +55,11 @@ export async function AuthGuard({
  */
 export async function requireAuth(redirectTo: string = '/login') {
   const user = await getCurrentUser();
-  
+
   if (!user) {
     redirect(redirectTo);
   }
-  
+
   return user;
 }
 
@@ -68,10 +68,10 @@ export async function requireAuth(redirectTo: string = '/login') {
  */
 export async function requireAdmin(redirectTo: string = '/dashboard') {
   const user = await requireAuth();
-  
+
   const { createClient } = await import('@/lib/supabase/server');
-  const supabase = createClient();
-  
+  const supabase = await createClient();
+
   const { data: profile } = await supabase
     .from('users')
     .select('is_admin')
@@ -81,6 +81,6 @@ export async function requireAdmin(redirectTo: string = '/dashboard') {
   if (!profile?.is_admin) {
     redirect(redirectTo);
   }
-  
+
   return user;
 }

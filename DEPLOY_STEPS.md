@@ -45,8 +45,8 @@ Your code is now at: https://github.com/robin0904/zen5
 
 ```
 Project URL: https://xxxxx.supabase.co
-anon public: eyJhbGc... (very long string)
-service_role: eyJhbGc... (different very long string)
+anon public: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkc3d4c2tnamtpYmJ0Y3p2ZGxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNTYxNDMsImV4cCI6MjA3OTczMjE0M30.FfS05ePo8LwGOVgzcA9RFv_EVYOiFViCEwBSDeC1gbo (very long string)
+service_role: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkc3d4c2tnamtpYmJ0Y3p2ZGxqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDE1NjE0MywiZXhwIjoyMDc5NzMyMTQzfQ.JPshtGFf7dU2VK7RF6d0sr6aatdHRDlx01XSOFILnSE (different very long string)
 ```
 
 **Save these in a text file!**
