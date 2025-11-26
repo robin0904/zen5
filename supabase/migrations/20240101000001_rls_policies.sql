@@ -20,7 +20,7 @@ ALTER TABLE revenue_tracking ENABLE ROW LEVEL SECURITY;
 -- ============================================================================
 
 -- Function to get current user's ID from auth.users
-CREATE OR REPLACE FUNCTION auth.user_id()
+CREATE OR REPLACE FUNCTION public.get_user_id()
 RETURNS UUID AS $$
   SELECT COALESCE(
     auth.uid(),
@@ -29,11 +29,11 @@ RETURNS UUID AS $$
 $$ LANGUAGE sql STABLE;
 
 -- Function to check if current user is admin
-CREATE OR REPLACE FUNCTION auth.is_admin()
+CREATE OR REPLACE FUNCTION public.is_user_admin()
 RETURNS BOOLEAN AS $$
   SELECT EXISTS (
     SELECT 1 FROM users
-    WHERE id = auth.user_id()
+    WHERE id = public.get_user_id()
     AND is_admin = TRUE
   );
 $$ LANGUAGE sql STABLE SECURITY DEFINER;
@@ -48,17 +48,17 @@ CREATE POLICY "Users can read own profile"
   ON users
   FOR SELECT
   TO authenticated
-  USING (id = auth.user_id());
+  USING (id = public.get_user_id());
 
 -- Users can update their own profile (except admin flag)
 CREATE POLICY "Users can update own profile"
   ON users
   FOR UPDATE
   TO authenticated
-  USING (id = auth.user_id())
+  USING (id = public.get_user_id())
   WITH CHECK (
-    id = auth.user_id() 
-    AND is_admin = (SELECT is_admin FROM users WHERE id = auth.user_id())
+    id = public.get_user_id() 
+    AND is_admin = (SELECT is_admin FROM users WHERE id = public.get_user_id())
   );
 
 -- Users can insert their own profile during signup
@@ -66,21 +66,21 @@ CREATE POLICY "Users can insert own profile"
   ON users
   FOR INSERT
   TO authenticated
-  WITH CHECK (id = auth.user_id());
+  WITH CHECK (id = public.get_user_id());
 
 -- Admins can read all users
 CREATE POLICY "Admins can read all users"
   ON users
   FOR SELECT
   TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_user_admin());
 
 -- Admins can update any user
 CREATE POLICY "Admins can update any user"
   ON users
   FOR UPDATE
   TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_user_admin());
 
 -- Allow reading public user data for leaderboard (limited fields)
 CREATE POLICY "Public can read leaderboard data"
@@ -106,21 +106,21 @@ CREATE POLICY "Admins can insert tasks"
   ON tasks
   FOR INSERT
   TO authenticated
-  WITH CHECK (auth.is_admin());
+  WITH CHECK (public.is_user_admin());
 
 -- Only admins can update tasks
 CREATE POLICY "Admins can update tasks"
   ON tasks
   FOR UPDATE
   TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_user_admin());
 
 -- Only admins can delete tasks
 CREATE POLICY "Admins can delete tasks"
   ON tasks
   FOR DELETE
   TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_user_admin());
 
 -- ============================================================================
 -- DAILY_USER_TASKS TABLE POLICIES
@@ -132,29 +132,29 @@ CREATE POLICY "Users can read own daily tasks"
   ON daily_user_tasks
   FOR SELECT
   TO authenticated
-  USING (user_id = auth.user_id());
+  USING (user_id = public.get_user_id());
 
 -- Users can insert their own daily tasks (system-generated)
 CREATE POLICY "Users can insert own daily tasks"
   ON daily_user_tasks
   FOR INSERT
   TO authenticated
-  WITH CHECK (user_id = auth.user_id());
+  WITH CHECK (user_id = public.get_user_id());
 
 -- Users can update their own daily tasks (mark as complete)
 CREATE POLICY "Users can update own daily tasks"
   ON daily_user_tasks
   FOR UPDATE
   TO authenticated
-  USING (user_id = auth.user_id())
-  WITH CHECK (user_id = auth.user_id());
+  USING (user_id = public.get_user_id())
+  WITH CHECK (user_id = public.get_user_id());
 
 -- Admins can read all daily tasks
 CREATE POLICY "Admins can read all daily tasks"
   ON daily_user_tasks
   FOR SELECT
   TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_user_admin());
 
 -- ============================================================================
 -- COMPLETIONS TABLE POLICIES
@@ -166,21 +166,21 @@ CREATE POLICY "Users can read own completions"
   ON completions
   FOR SELECT
   TO authenticated
-  USING (user_id = auth.user_id());
+  USING (user_id = public.get_user_id());
 
 -- Users can insert their own completions
 CREATE POLICY "Users can insert own completions"
   ON completions
   FOR INSERT
   TO authenticated
-  WITH CHECK (user_id = auth.user_id());
+  WITH CHECK (user_id = public.get_user_id());
 
 -- Admins can read all completions
 CREATE POLICY "Admins can read all completions"
   ON completions
   FOR SELECT
   TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_user_admin());
 
 -- ============================================================================
 -- BADGES TABLE POLICIES
@@ -191,21 +191,21 @@ CREATE POLICY "Users can read own badges"
   ON badges
   FOR SELECT
   TO authenticated
-  USING (user_id = auth.user_id());
+  USING (user_id = public.get_user_id());
 
 -- System can insert badges (via service role)
 CREATE POLICY "System can insert badges"
   ON badges
   FOR INSERT
   TO authenticated
-  WITH CHECK (user_id = auth.user_id());
+  WITH CHECK (user_id = public.get_user_id());
 
 -- Admins can read all badges
 CREATE POLICY "Admins can read all badges"
   ON badges
   FOR SELECT
   TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_user_admin());
 
 -- Allow reading badges for public profiles
 CREATE POLICY "Public can read user badges"
@@ -230,7 +230,7 @@ CREATE POLICY "Admins can insert leaderboard snapshots"
   ON leaderboard_snapshots
   FOR INSERT
   TO authenticated
-  WITH CHECK (auth.is_admin());
+  WITH CHECK (public.is_user_admin());
 
 -- ============================================================================
 -- REFERRALS TABLE POLICIES
@@ -241,21 +241,21 @@ CREATE POLICY "Users can read own referrals"
   ON referrals
   FOR SELECT
   TO authenticated
-  USING (referrer_id = auth.user_id() OR referred_id = auth.user_id());
+  USING (referrer_id = public.get_user_id() OR referred_id = public.get_user_id());
 
 -- Users can insert referrals where they are the referrer
 CREATE POLICY "Users can insert own referrals"
   ON referrals
   FOR INSERT
   TO authenticated
-  WITH CHECK (referrer_id = auth.user_id());
+  WITH CHECK (referrer_id = public.get_user_id());
 
 -- Admins can read all referrals
 CREATE POLICY "Admins can read all referrals"
   ON referrals
   FOR SELECT
   TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_user_admin());
 
 -- ============================================================================
 -- REVENUE_TRACKING TABLE POLICIES
@@ -267,14 +267,14 @@ CREATE POLICY "Admins can read revenue"
   ON revenue_tracking
   FOR SELECT
   TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_user_admin());
 
 -- Only admins can insert revenue records
 CREATE POLICY "Admins can insert revenue"
   ON revenue_tracking
   FOR INSERT
   TO authenticated
-  WITH CHECK (auth.is_admin());
+  WITH CHECK (public.is_user_admin());
 
 -- Allow service role to insert revenue (for webhooks)
 CREATE POLICY "Service role can insert revenue"

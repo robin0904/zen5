@@ -7,17 +7,17 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getCurrentUser } from '@/lib/supabase/auth-helpers';
-import { 
-  selectDailyTasks, 
+import {
+  selectDailyTasks,
   hasTasksForToday,
-  getDailyTasks 
+  getDailyTasks
 } from '@/lib/tasks/task-selection';
 
 export async function GET(request: Request) {
   try {
     // Check authentication
     const user = await getCurrentUser();
-    
+
     if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     if (hasExisting) {
       // Return existing tasks
       const tasks = await getDailyTasks(user.id, date);
-      
+
       return NextResponse.json({
         tasks,
         date,
@@ -47,8 +47,8 @@ export async function GET(request: Request) {
     const result = await selectDailyTasks(user.id, date);
 
     // Store assignments in daily_user_tasks table (Requirement 3.6)
-    const supabase = createClient();
-    
+    const supabase = await createClient();
+
     const assignments = result.tasks.map(task => ({
       user_id: user.id,
       task_id: task.id,

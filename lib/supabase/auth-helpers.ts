@@ -13,16 +13,16 @@ import type { User } from '@supabase/supabase-js';
  * Use in Server Components, Route Handlers, Server Actions
  */
 export async function getCurrentUser(): Promise<User | null> {
-  const supabase = createServerClient();
-  
+  const supabase = await createServerClient();
+
   try {
     const { data: { user }, error } = await supabase.auth.getUser();
-    
+
     if (error) {
       console.error('Error getting user:', error.message);
       return null;
     }
-    
+
     return user;
   } catch (error) {
     console.error('Error in getCurrentUser:', error);
@@ -35,16 +35,16 @@ export async function getCurrentUser(): Promise<User | null> {
  * Use in Server Components, Route Handlers, Server Actions
  */
 export async function getCurrentSession() {
-  const supabase = createServerClient();
-  
+  const supabase = await createServerClient();
+
   try {
     const { data: { session }, error } = await supabase.auth.getSession();
-    
+
     if (error) {
       console.error('Error getting session:', error.message);
       return null;
     }
-    
+
     return session;
   } catch (error) {
     console.error('Error in getCurrentSession:', error);
@@ -65,25 +65,25 @@ export async function isAuthenticated(): Promise<boolean> {
  * Queries the users table to check is_admin flag
  */
 export async function isAdmin(): Promise<boolean> {
-  const supabase = createServerClient();
+  const supabase = await createServerClient();
   const user = await getCurrentUser();
-  
+
   if (!user) {
     return false;
   }
-  
+
   try {
     const { data, error } = await supabase
       .from('users')
       .select('is_admin')
       .eq('id', user.id)
       .single();
-    
+
     if (error) {
       console.error('Error checking admin status:', error.message);
       return false;
     }
-    
+
     return data?.is_admin === true;
   } catch (error) {
     console.error('Error in isAdmin:', error);
@@ -96,25 +96,25 @@ export async function isAdmin(): Promise<boolean> {
  * Returns full user profile from users table
  */
 export async function getUserProfile() {
-  const supabase = createServerClient();
+  const supabase = await createServerClient();
   const user = await getCurrentUser();
-  
+
   if (!user) {
     return null;
   }
-  
+
   try {
     const { data, error } = await supabase
       .from('users')
       .select('*')
       .eq('id', user.id)
       .single();
-    
+
     if (error) {
       console.error('Error getting user profile:', error.message);
       return null;
     }
-    
+
     return data;
   } catch (error) {
     console.error('Error in getUserProfile:', error);
@@ -128,9 +128,9 @@ export async function getUserProfile() {
 export async function signOut() {
   // Try server-side first
   try {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const { error } = await supabase.auth.signOut();
-    
+
     if (error) {
       throw error;
     }
@@ -148,13 +148,13 @@ export async function signOut() {
  */
 export function onAuthStateChange(callback: (user: User | null) => void) {
   const supabase = createBrowserClient();
-  
+
   const { data: { subscription } } = supabase.auth.onAuthStateChange(
     (_event, session) => {
       callback(session?.user ?? null);
     }
   );
-  
+
   return subscription;
 }
 

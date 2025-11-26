@@ -25,7 +25,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     icon: '🔥',
     requirement: '3-day streak',
     checkFunction: async (userId: string) => {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data } = await supabase
         .from('users')
         .select('streak')
@@ -40,7 +40,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     icon: '👑',
     requirement: '7-day streak',
     checkFunction: async (userId: string) => {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data } = await supabase
         .from('users')
         .select('streak')
@@ -55,7 +55,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     icon: '⭐',
     requirement: '30 completions',
     checkFunction: async (userId: string) => {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data, count } = await supabase
         .from('completions')
         .select('*', { count: 'exact', head: true })
@@ -69,7 +69,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     icon: '💰',
     requirement: '100 coins',
     checkFunction: async (userId: string) => {
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data } = await supabase
         .from('users')
         .select('coins')
@@ -105,7 +105,7 @@ export async function checkBadgeEarned(
  * Check if user already has a badge
  */
 export async function hasBadge(userId: string, badgeName: string): Promise<boolean> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('badges')
@@ -152,7 +152,7 @@ export async function awardBadge(
   }
 
   // Award the badge
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { error } = await supabase
     .from('badges')
@@ -190,7 +190,7 @@ export async function checkAndAwardAllBadges(userId: string): Promise<string[]> 
  * Get all badges for a user
  */
 export async function getUserBadges(userId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('badges')
@@ -218,7 +218,7 @@ export interface BadgeProgress {
 }
 
 export async function getBadgeProgress(userId: string): Promise<BadgeProgress[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Get user stats
   const { data: user } = await supabase

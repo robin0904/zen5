@@ -34,7 +34,7 @@ export async function selectDailyTasks(
   userId: string,
   date: string = new Date().toISOString().split('T')[0]
 ): Promise<TaskSelectionResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   // Get user interests
   const { data: user } = await supabase
@@ -108,7 +108,7 @@ export async function selectInterestBasedTasks(
   count: number,
   excludeIds: Set<string>
 ): Promise<Task[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // If no interests, return random tasks
   if (interests.length === 0) {
@@ -151,7 +151,7 @@ export async function selectRandomTasks(
   count: number,
   excludeIds: Set<string>
 ): Promise<Task[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     const excludeArray = Array.from(excludeIds);
@@ -192,7 +192,7 @@ export async function selectTrendingTasks(
   count: number,
   excludeIds: Set<string>
 ): Promise<Task[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     const sevenDaysAgo = new Date();
@@ -247,7 +247,7 @@ export async function selectChallengeTasks(
   count: number,
   excludeIds: Set<string>
 ): Promise<Task[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     const { data, error } = await supabase
@@ -298,7 +298,7 @@ export async function hasTasksForToday(
   userId: string,
   date: string = new Date().toISOString().split('T')[0]
 ): Promise<boolean> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('daily_user_tasks')
@@ -322,7 +322,7 @@ export async function getDailyTasks(
   userId: string,
   date: string = new Date().toISOString().split('T')[0]
 ): Promise<Task[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('daily_user_tasks')

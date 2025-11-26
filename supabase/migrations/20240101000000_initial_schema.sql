@@ -102,8 +102,8 @@ CREATE INDEX idx_completions_user_id ON completions(user_id, completed_at DESC);
 -- Index for task popularity queries
 CREATE INDEX idx_completions_task_id ON completions(task_id, completed_at DESC);
 
--- Index for trending task queries (last 7 days)
-CREATE INDEX idx_completions_recent ON completions(completed_at DESC) WHERE completed_at > NOW() - INTERVAL '7 days';
+-- Index for recent completions (removed WHERE clause with NOW() to avoid IMMUTABLE error)
+CREATE INDEX idx_completions_recent ON completions(completed_at DESC);
 
 -- ============================================================================
 -- BADGES TABLE

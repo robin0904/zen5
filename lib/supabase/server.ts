@@ -8,8 +8,8 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { getEnv } from '@/lib/env';
 
-export function createClient() {
-  const cookieStore = cookies();
+export async function createClient() {
+  const cookieStore = await cookies();
 
   return createServerClient(
     getEnv('NEXT_PUBLIC_SUPABASE_URL'),
@@ -47,25 +47,27 @@ export function createClient() {
  * Use only for admin operations that bypass RLS
  * NEVER expose this client to the browser
  */
-export function createAdminClient() {
+export async function createAdminClient() {
+  const cookieStore = await cookies();
+
   return createServerClient(
     getEnv('NEXT_PUBLIC_SUPABASE_URL'),
     getEnv('SUPABASE_SERVICE_ROLE_KEY'),
     {
       cookies: {
         get(name: string) {
-          return cookies().get(name)?.value;
+          return cookieStore.get(name)?.value;
         },
         set(name: string, value: string, options: CookieOptions) {
           try {
-            cookies().set({ name, value, ...options });
+            cookieStore.set({ name, value, ...options });
           } catch (error) {
             // Ignore errors in Server Components
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
-            cookies().set({ name, value: '', ...options });
+            cookieStore.set({ name, value: '', ...options });
           } catch (error) {
             // Ignore errors in Server Components
           }

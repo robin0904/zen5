@@ -75,7 +75,7 @@ export async function checkAllTasksCompleted(
   userId: string,
   date: string = new Date().toISOString().split('T')[0]
 ): Promise<boolean> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('daily_user_tasks')
@@ -97,7 +97,7 @@ export async function checkAllTasksCompleted(
  * Requirement 4.4: Increment streak when all 5 tasks completed
  */
 export async function updateStreak(userId: string): Promise<number> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Get current user stats
   const { data: user, error: userError } = await supabase
@@ -175,7 +175,7 @@ export function calculateLevel(xp: number): number {
  * Requirement 4.3: XP increases by coins earned
  */
 export async function updateXP(userId: string, coinsEarned: number): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: user, error: userError } = await supabase
     .from('users')
@@ -204,7 +204,7 @@ export async function updateXP(userId: string, coinsEarned: number): Promise<voi
  * Update user coins
  */
 export async function updateCoins(userId: string, coinsEarned: number): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: user, error: userError } = await supabase
     .from('users')
@@ -242,7 +242,7 @@ export async function completeTask(
   taskId: string,
   date: string = new Date().toISOString().split('T')[0]
 ): Promise<CompletionResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     // 1. Get the daily user task
@@ -380,7 +380,7 @@ export async function completeTask(
  * Get user's current stats
  */
 export async function getUserStats(userId: string): Promise<UserStats | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('users')
@@ -400,7 +400,7 @@ export async function getUserStats(userId: string): Promise<UserStats | null> {
  * Get completion count for today
  */
 export async function getTodayCompletionCount(userId: string): Promise<number> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const today = new Date().toISOString().split('T')[0];
 
   const { data, error } = await supabase
@@ -423,7 +423,7 @@ export async function getTodayCompletionCount(userId: string): Promise<number> {
  * Requirement 4.6: Reset streak after 24 hours of inactivity
  */
 export async function checkAndResetStreaks(): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Get all users with active streaks
   const { data: users, error } = await supabase

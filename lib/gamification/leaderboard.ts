@@ -15,7 +15,7 @@ export interface LeaderboardEntry {
  * Get the global leaderboard sorted by coins
  */
 export async function getGlobalLeaderboard(limit: number = 100): Promise<LeaderboardEntry[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const { data, error } = await supabase
         .from('users')
@@ -46,7 +46,7 @@ export async function getGlobalLeaderboard(limit: number = 100): Promise<Leaderb
  * For now, we'll fetch the count of users with more coins.
  */
 export async function getUserRank(userId: string): Promise<number | null> {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Get user's coins
     const { data: user, error: userError } = await supabase
