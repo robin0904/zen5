@@ -30,7 +30,7 @@ export default async function LoginPage() {
 
         <div className="space-y-4">
           <GoogleAuthButton />
-          
+
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
@@ -46,7 +46,7 @@ export default async function LoginPage() {
         </div>
 
         <div className="mt-6 text-center text-sm">
-          <span className="text-gray-600">Don't have an account? </span>
+          <span className="text-gray-600">Don&apos;t have an account? </span>
           <Link
             href="/signup"
             className="text-primary-600 hover:text-primary-700 font-medium"
